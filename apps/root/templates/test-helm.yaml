@@ -1,0 +1,36 @@
+{{- if .Values.test-helm }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.clusterName }}-test-helm
+  namespace: argocd
+  # Adding a finalizer ensures that if the root app is deleted, 
+  # the child apps are also cleaned up properly.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      path: charts/metallb  # Points to the actual MetalLB Helm chart
+      helm:
+        # Pass cluster-specific values down to the actual infra tool
+        valueFiles:
+          - values.yaml
+          - '$values/clusters/{{ .Values.clusterName }}/overrides.yaml'
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      ref: values 
+  destination:
+    # Use the cluster name/server passed from the ApplicationSet
+    name: {{ .Values.clusterName }}
+    namespace: test-app
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

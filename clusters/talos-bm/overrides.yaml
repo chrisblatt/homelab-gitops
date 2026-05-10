@@ -1,0 +1,3 @@
+clusterName: talos-bm
+
+test-helm: false

@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infra-fleet
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            env: managed
+  template:
+    metadata:
+      name: 'root-{{name}}'
+    spec:
+      project: default
+      sources:
+        # Source 1: Your "App of Apps" Helm Chart
+        - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+          targetRevision: HEAD
+          path: 'apps/root' # The "Logic"
+          helm:
+            valueFiles:
+              - '$values/clusters/global/overrides.yaml'
+              - '$values/clusters/{{name}}/overrides.yaml'
+            # Safety feature: if the cluster doesn't have an override, it still syncs
+            ignoreMissingValueFiles: true 
+
+        # Source 2: Your Cluster Configurations
+        - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+          targetRevision: HEAD
+          ref: values # This label is what Source 1 looks for
+      destination:
+        name: '{{name}}'
+        namespace: infra
+      syncPolicy:
+        automated:
+          enabled: false
+          prune: false
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
