@@ -13,7 +13,7 @@ spec:
   sources:
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
-      path: charts/metallb  # Points to the actual MetalLB Helm chart
+      path: apps/test-helm
       helm:
         # Pass cluster-specific values down to the actual infra tool
         valueFiles:
