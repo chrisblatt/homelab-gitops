@@ -17,7 +17,7 @@ spec:
       helm:
         {{- if .Values.test_helm }}
         valuesObject:
-          {{- .Values.test_helm | toYaml | nindent 12 }}
+          {{- omit .Values.test_helm "enabled" | toYaml | nindent 12 }}
         {{- else }}
         valuesObject: {}
         {{- end }}        
