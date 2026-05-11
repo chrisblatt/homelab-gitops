@@ -159,3 +159,12 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# ConfigMap for environment variables
+configMap:
+  enabled: true
+  data:
+    # Add your environment variables here
+    LOG_LEVEL: "info"
+    APP_ENV: "production"
+    # Example: CUSTOM_VAR: "custom-value"

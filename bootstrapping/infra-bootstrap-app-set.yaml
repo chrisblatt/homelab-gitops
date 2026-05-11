@@ -23,8 +23,10 @@ spec:
             valueFiles:
               - '$values/clusters/global/overrides.yaml'
               - '$values/clusters/{{name}}/overrides.yaml'
-            # Safety feature: if the cluster doesn't have an override, it still syncs
-            ignoreMissingValueFiles: true 
+            ignoreMissingValueFiles: true
+            parameters:
+              - name: "clusterName"
+                value: "{{name}}" 
 
         # Source 2: Your Cluster Configurations
         - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'

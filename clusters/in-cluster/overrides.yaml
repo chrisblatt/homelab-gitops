@@ -1,1 +1,7 @@
-clusterName: in-cluster
+test_helm:
+  enabled: true
+  configMap:
+    enabled: true
+    data:
+      CLUSTER_NAME: in-cluster
+      FOO: bar

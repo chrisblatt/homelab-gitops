@@ -15,10 +15,8 @@ spec:
       targetRevision: 'HEAD'
       path: apps/test-helm
       helm:
-        # Pass cluster-specific values down to the actual infra tool
-        valueFiles:
-          - values.yaml
-          - '$values/clusters/{{ .Values.clusterName }}/overrides.yaml'
+        values: |
+{{ toYaml .Values.test_helm | indent 8 }}
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
       ref: values 

@@ -1,1 +1,3 @@
-test_helm: true
+test_helm: 
+  enabled: true
+  randomKey: "randomValue"
