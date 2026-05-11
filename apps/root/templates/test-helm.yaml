@@ -15,7 +15,7 @@ spec:
       targetRevision: 'HEAD'
       path: apps/test-helm
       helm:
-        {{- if .Values.metallb }}
+        {{- if .Values.test_helm }}
         valuesObject:
           {{- .Values.test_helm | toYaml | nindent 12 }}
         {{- else }}
