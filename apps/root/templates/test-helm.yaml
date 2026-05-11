@@ -17,7 +17,7 @@ spec:
       helm:
         valuesObject:
 {{- if .Values.istio }}
-{{ .Values.istio | toYaml | indent 10 }}
+{{ .Values.istio | toYaml | nindent 12 }}
 {{- else }}
         {}
 {{- end }}          
