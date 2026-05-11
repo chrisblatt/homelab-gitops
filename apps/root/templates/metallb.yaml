@@ -1,0 +1,39 @@
+{{- if .Values.metallb.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.clusterName }}-metallb
+  namespace: argocd
+  # Adding a finalizer ensures that if the root app is deleted, 
+  # the child apps are also cleaned up properly.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      path: apps/metallb
+      helm:
+        {{- if .Values.metallb }}
+        valuesObject:
+          metallb:
+            {{- omit .Values.metallb "enabled" | toYaml | nindent 12 }}
+        {{- else }}
+        valuesObject: {}
+        {{- end }}        
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      ref: values 
+  destination:
+    # Use the cluster name/server passed from the ApplicationSet
+    name: {{ .Values.clusterName }}
+    namespace: metallb-system
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

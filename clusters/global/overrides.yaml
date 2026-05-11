@@ -1,3 +1,5 @@
+metallb:
+  enabled: true
 test_helm:
   enabled: true
   randomKey: "randomValue"
