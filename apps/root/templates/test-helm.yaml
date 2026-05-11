@@ -15,8 +15,8 @@ spec:
       targetRevision: 'HEAD'
       path: apps/test-helm
       helm:
-        values: |
-{{ toYaml .Values.test_helm | indent 8 }}
+        valuesObject:
+          {{- .Values.test_helm | toYaml | nindent 8 }}
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
       ref: values 
