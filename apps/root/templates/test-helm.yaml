@@ -16,7 +16,11 @@ spec:
       path: apps/test-helm
       helm:
         valuesObject:
-          {{- .Values.test_helm | toYaml | nindent 8 }}
+{{- if .Values.istio }}
+{{ .Values.istio | toYaml | indent 10 }}
+{{- else }}
+        {}
+{{- end }}          
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
       ref: values 
