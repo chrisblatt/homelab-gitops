@@ -15,12 +15,12 @@ spec:
       targetRevision: 'HEAD'
       path: apps/test-helm
       helm:
+        {{- if .Values.metallb }}
         valuesObject:
-{{- if .Values.istio }}
-{{ .Values.istio | toYaml | nindent 12 }}
-{{- else }}
-        {}
-{{- end }}          
+          {{- .Values.test_helm | toYaml | nindent 12 }}
+        {{- else }}
+        valuesObject: {}
+        {{- end }}        
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
       ref: values 
