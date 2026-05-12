@@ -10,20 +10,17 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  sources:
-    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
-      targetRevision: 'HEAD'
-      path: apps/test-app
-      helm:
-        {{- if .Values.testApp }}
-        valuesObject:
-          {{- omit .Values.testApp "enabled" | toYaml | nindent 12 }}
-        {{- else }}
-        valuesObject: {}
-        {{- end }}        
-    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
-      targetRevision: 'HEAD'
-      ref: values 
+  source:
+    repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+    targetRevision: 'HEAD'
+    path: apps/test-app
+    helm:
+      {{- if .Values.testApp }}
+      valuesObject:
+        {{- omit .Values.testApp "enabled" | toYaml | nindent 10 }}
+      {{- else }}
+      valuesObject: {}
+      {{- end }}        
   destination:
     # Use the cluster name/server passed from the ApplicationSet
     name: {{ .Values.clusterName }}

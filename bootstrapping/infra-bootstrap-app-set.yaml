@@ -6,6 +6,7 @@ metadata:
 spec:
   generators:
     - clusters:
+        # Only target clusters explicitly opted-in via this label
         selector:
           matchLabels:
             env: managed
@@ -16,23 +17,29 @@ spec:
       project: default
       sources:
         # Source 1: Your "App of Apps" Helm Chart
+        # This source contains the actual Helm templates for the Applications.
         - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
           targetRevision: HEAD
-          path: 'apps/root' # The "Logic"
+          path: 'apps/root' 
           helm:
             valueFiles:
+              # These paths are relative to "Source 2" (aliased as $values)
               - '$values/clusters/global/overrides.yaml'
               - '$values/clusters/{{name}}/overrides.yaml'
             ignoreMissingValueFiles: true
             parameters:
+              # Pass the cluster name into the Helm template for logic based on environment
               - name: "clusterName"
                 value: "{{name}}" 
 
         # Source 2: Your Cluster Configurations
+        # This source is aliased as "values" using the 'ref' field.
+        # It allows Source 1 to pull YAML files from a different directory or even a different repo.
         - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
           targetRevision: HEAD
-          ref: values # This label is what Source 1 looks for
+          ref: values 
       destination:
+        # {{name}} is a variable provided by the Cluster Generator
         name: '{{name}}'
         namespace: infra
       syncPolicy:
