@@ -1,0 +1,48 @@
+{{- if .Values.examplePatch.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.clusterName }}-example-patch
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    # Single source: Helm chart with optional Kustomize patches and resources
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      path: apps/example-patch
+      helm:
+        {{- if .Values.examplePatch }}
+        valuesObject:
+          {{- omit .Values.examplePatch "enabled" | toYaml | nindent 12 }}
+        {{- else }}
+        valuesObject: {}
+        {{- end }}
+      {{- if and .Values.examplePatch.patches .Values.examplePatch.patches.enabled }}
+      kustomize:
+        # Include cluster-specific ConfigMap as a resource
+        resources:
+          - ../../../clusters/{{ .Values.clusterName }}/configmap-patch.yaml
+        patches:
+          - target:
+              kind: Deployment
+              name: example-patch
+            path: ../../../clusters/{{ .Values.clusterName }}/deployment-patch.yaml
+      {{- end }}
+    # Values reference
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      ref: values
+  destination:
+    name: {{ .Values.clusterName }}
+    namespace: example-patch
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

@@ -1,9 +1,14 @@
 metallb:
   enabled: false
-test_helm:
+testApp:
   enabled: true
   configMap:
     enabled: true
     data:
       CLUSTER_NAME: in-cluster
       FOO: bar
+examplePatch:
+  enabled: true
+  replicaCount: 1
+  patches:
+    enabled: false

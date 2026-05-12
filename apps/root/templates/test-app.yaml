@@ -1,8 +1,8 @@
-{{- if .Values.test_helm.enabled }}
+{{- if .Values.testApp.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ .Values.clusterName }}-test-helm
+  name: {{ .Values.clusterName }}-test-app
   namespace: argocd
   # Adding a finalizer ensures that if the root app is deleted, 
   # the child apps are also cleaned up properly.
@@ -13,11 +13,11 @@ spec:
   sources:
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
-      path: apps/test-helm
+      path: apps/test-app
       helm:
-        {{- if .Values.test_helm }}
+        {{- if .Values.testApp }}
         valuesObject:
-          {{- omit .Values.test_helm "enabled" | toYaml | nindent 12 }}
+          {{- omit .Values.testApp "enabled" | toYaml | nindent 12 }}
         {{- else }}
         valuesObject: {}
         {{- end }}        
