@@ -6,7 +6,11 @@ resources:
 - configmap-patch.yaml
 
 # Patches to apply to the helm-rendered Deployment
-patchesStrategicMerge:
-- deployment-patch.yaml
+patches:
+- target:
+    kind: Deployment
+    name: example-patch
+  path: deployment-patch.yaml
 
 namespace: example-patch
+

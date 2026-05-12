@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: example-patch
-  namespace: example-patch
 spec:
   template:
     spec:
