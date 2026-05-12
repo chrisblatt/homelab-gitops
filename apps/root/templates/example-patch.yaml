@@ -20,20 +20,11 @@ spec:
         {{- else }}
         valuesObject: {}
         {{- end }}
-      
     {{- if and .Values.examplePatch.patches .Values.examplePatch.patches.enabled }}
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
-      path: apps/example-patch
-      kustomize:
-        # Include cluster-specific ConfigMap as a resource
-        resources:
-          - $values/clusters/{{ .Values.clusterName }}/configmap-patch.yaml
-        patches:
-          - target:
-              kind: Deployment
-              name: example-patch
-            path: $values/clusters/{{ .Values.clusterName }}/deployment-patch.yaml
+      path: clusters/{{ .Values.clusterName }}/kustomize/example-patch
+      kustomize: {}
     {{- end }}
     # Values reference
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
