@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   sources:
-    # Example Helm chart with optional Kustomize patch and new resource
+    # Single source: Helm chart with optional Kustomize patches and resources
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
       targetRevision: 'HEAD'
       path: apps/example-patch
@@ -20,17 +20,20 @@ spec:
         {{- else }}
         valuesObject: {}
         {{- end }}
+      
     {{- if and .Values.examplePatch.patches .Values.examplePatch.patches.enabled }}
+    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
+      targetRevision: 'HEAD'
+      path: apps/example-patch
       kustomize:
+        # Include cluster-specific ConfigMap as a resource
+        resources:
+          - $values/clusters/{{ .Values.clusterName }}/configmap-patch.yaml
         patches:
           - target:
               kind: Deployment
               name: example-patch
-            path: ../../../clusters/{{ .Values.clusterName }}/deployment-patch.yaml
-    - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
-      targetRevision: 'HEAD'
-      path: clusters/{{ .Values.clusterName }}/configmap-patch.yaml
-      kustomize: {}
+            path: $values/clusters/{{ .Values.clusterName }}/deployment-patch.yaml
     {{- end }}
     # Values reference
     - repoURL: 'https://github.com/chrisblatt/homelab-gitops.git'
