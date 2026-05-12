@@ -11,4 +11,4 @@ examplePatch:
   enabled: true
   replicaCount: 1
   patches:
-    enabled: false
+    enabled: true
