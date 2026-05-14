@@ -1,6 +1,8 @@
 # homelab-gitops
 
-This repository demonstrates a centralized **Argo CD Multi-Cluster** management pattern using the **App of Apps** model and **ApplicationSets**.
+This repository demonstrates a centralized **Argo CD Multi-Cluster** managementment using the **App of Apps** pattern and a bootstrapping **ApplicationSets**.
+
+**Note:** This README is LLM generated because I really dislike documentation and writing succinctly. However this pattern comes from real world experience and has been deployed to manage 100+ production clusters at the edge.
 
 ## Architecture Overview
 
@@ -9,18 +11,18 @@ This repository demonstrates a centralized **Argo CD Multi-Cluster** management 
 
 ## Getting Started
 
-### 1. Register a Cluster
-Ensure your target cluster is added to Argo CD. To be picked up by the automation, it must have the label `env=managed`.
-
-```bash
-argocd cluster add <context-name> --label env=managed
-```
-
-### 2. Deploy the Bootstrap AppSet
+### 1. Deploy the Bootstrap AppSet
 Apply the bootstrap manifest to your management cluster:
 
 ```bash
 kubectl apply -f bootstrapping/infra-bootstrap-app-set.yaml
+```
+
+### 2. Register a Managed Cluster
+Ensure your target cluster is added to Argo CD. To be picked up by the automation, it must have the label `env=managed`.
+
+```bash
+argocd cluster add <context-name> --label env=managed
 ```
 
 Argo CD will now automatically generate a `root` application for every labeled cluster.
@@ -41,7 +43,7 @@ To add a new service (e.g., `monitoring`):
 
 1.  **Create the Chart**: Add your Helm chart or manifest folder to `apps/monitoring`.
 2.  **Update the Root App**: Add a template for the new Application in `apps/root/templates/`. This template should point to `apps/monitoring`.
-3.  **Define Defaults**: Add default values for the new app in `apps/root/values.yaml`.
+3.  **Define Defaults**: Add default values for the new app in `clusters/global/overrides.yaml`.
 4.  **Cluster Overrides**: If a specific cluster needs a different version or config for `monitoring`, add those values to `clusters/<cluster-name>/overrides.yaml`.
 
 ### Directory Structure
